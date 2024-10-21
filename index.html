@@ -6,7 +6,448 @@
   <link rel="icon" type="image/svg+xml" href="/vite.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vite App</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    /* @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap'); */
+
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Rubik', sans-serif;
+}
+
+:root {
+  --contenteditable: 2px solid black;
+  --b: 1px solid var(--clr-btn-active);
+  --dtb2: 1px solid var(--dtclr-gray);
+
+  --fs-1: 18px;
+  --fs-2: 25px;
+  --fs-3: 20px;
+
+  --clr-main-blue: hsl(238, 40%, 52%);
+  --clr-delete: hsl(358, 79%, 66%);
+  --clr-btn-active: hsl(239, 57%, 85%);
+  --clr-delete-active: hsl(357, 100%, 86%);
+  --clr-title: hsl(212, 24%, 26%);
+  --clr-text: hsl(211, 10%, 45%);
+  --clr-body: hsl(223, 19%, 93%);
+  --clr-gray: hsl(228, 33%, 97%);
+  
+  --clr-white: hsl(0, 0%, 100%);
+  --clr-black: hsl(0, 0%, 0%);
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  background-color: var(--clr-body);
+}
+body.dark {
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
+.bgNone {
+  border: none;
+  background-color: transparent;
+}
+
+main {
+  max-width: 700px;
+  min-width: 350px;
+  height: 90vh;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+header {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow-y: scroll;
+  padding-bottom: 10px;
+  scroll-behavior: smooth;
+}
+
+
+header::-webkit-scrollbar {
+  width: 5px;
+}
+header::-webkit-scrollbar-thumb {
+  background-color: var(--clr-main-blue);
+}
+
+.commentObject {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.comment, .reply {
+  width: 100%;
+  padding: 15px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-radius: 10px;
+  background-color: var(--clr-white);
+}
+.header {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.comment.dark, .reply.dark {
+  background-color: var(--clr-black);
+}
+
+
+.comment {
+  margin-bottom: 10px;
+}
+
+.screenLike {
+  width: 40px;
+  height: auto;
+  margin-right: 20px;
+  padding: 5px 0px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  border-radius: 5px;
+  background-color: var(--clr-body);
+}
+.screenLike.dark {
+  background-color: var(--clr-black);
+}
+
+.screen {
+  font-size: var(--fs-2);
+  font-weight: bold;
+  color: var(--clr-main-blue);
+}
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.otherProfile img {
+  width: 35px;
+  height: 35px;
+}
+
+.userName {
+  color: var(--clr-main-blue);
+  font-size: var(--fs-3);
+}
+
+.date {
+  color: var(--clr-text);
+}
+.date.dark {
+  color: var(--clr-gray);
+}
+
+#you {
+  background-color: var(--clr-main-blue);
+  padding: 2px 3px;
+  border-radius: 5px;
+  color: var(--clr-white);
+}
+
+.modifier{
+  display: flex;
+  gap: 20px;
+  margin-left: 100px;
+}
+
+.modifier button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.replyBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+  color: var(--clr-main-blue);
+  font-size: var(--fs-1);
+  font-weight: bold;
+}
+.replyBtn.dark {
+  color: var(--clr-white);
+}
+
+.text, .userText {
+  width: 100%;
+  height: auto;
+  margin-top: 15px;
+  color: var(--clr-text);
+}
+
+.text.dark, .userText.dark {
+  width: 90%;
+  color: var(--clr-white);
+}
+
+.userText {
+  word-break: break-all;
+  height: auto;
+}
+.userText.contenteditable {
+  padding: 5px;
+  border-radius: 5px;
+}
+
+
+.replyModal {
+  width: 100%;
+  min-height: 140px;
+  padding: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  border-radius: 10px;
+  background-color: var(--clr-white);
+  transform-origin: top;
+  transform: scaleY(0);
+  transition: 0.5s;
+  margin: 10px 0px;
+  display: none;
+}
+.replyModal.dark {
+  background-color: var(--clr-black);
+}
+.replyModal.show {
+  display: flex;
+  transform: scaleY(1);
+}
+
+.replyText {
+  flex: 1;
+  height: 100%;
+  padding: 20px;
+  border-radius: 10px;
+  resize: none;
+}
+
+.replySection {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 10px;
+  border-left: 1px solid var(--clr-text);
+  width: 95%;
+  margin-bottom: 10px;
+  min-height: 0px;
+  min-width: 0px;
+}
+.replySection.dark {
+  border-left: 1px solid var(--clr-body);
+}
+.replyObject {
+  width: 95%;
+}
+
+
+
+
+footer {
+  width: 100%;
+  height: 140px;
+  padding: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  border-radius: 10px;
+  background-color: var(--clr-white);
+}
+
+footer.dark {
+  background-color: var(--clr-black);
+}
+
+.userProfile {
+  border-radius: 50%;
+  border: none;
+  background-color: transparent;
+}
+.userProfile img{
+  width: 40px;
+  height: 40px;
+}
+
+#userText {
+  flex: 1;
+  height: 100%;
+  padding: 20px;
+  border-radius: 10px;
+  resize: none;
+}
+
+.mainBtn {
+  width: auto;
+  height: 40px;
+  padding: 0px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: var(--fs-1);
+  color: var(--clr-white);
+  background-color: var(--clr-main-blue);
+}
+
+.deleteBtn {
+  color: var(--clr-delete);
+  font-size: var(--fs-1);
+}
+.editBtn {
+  color: var(--clr-main-blue);
+  font-size: var(--fs-1);
+}
+
+.modal {
+  flex-direction: column;
+  align-items: center;
+  text-align: left;
+  outline: var(--b);
+  width: 400px;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: var(--clr-white);
+  display: none;
+}
+.modal h1 {
+  margin-bottom: 20px;
+}
+.modal div {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 20px;
+  justify-content: space-between
+}
+
+.modal div button {
+  width: 100%;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: var(--fs-1);
+  color: var(--clr-white);
+}
+.no {
+  background-color: var(--clr-text);
+}
+.yes {
+  background-color: var(--clr-delete);
+}
+
+body.deleteModal::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 2;
+}
+
+body.dark::after {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+
+.modal.deleteModal {
+  display: flex;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+}
+
+.display {
+  display: none;
+}
+
+.replying {
+  color: var(--clr-main-blue);
+}
+
+.userReply {
+  width: 95%;
+}
+.replyReplySection {
+  margin-top: 20px;
+  border: none;
+  width: 100%;
+}
+
+aside {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 0px 30px;
+}
+aside.dark {
+  color: var(--clr-white);
+}
+#theme {
+  width: 30px;
+  height: 30px;
+  margin: 5px 0px;
+  border: none;
+  border-radius: 50%;
+  background-color: var(--clr-white);
+  overflow: hidden;
+}
+
+#astre {
+  display: block;
+  width: 30px;
+  height: 30px;
+  background-color: black;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+#astre.moon {
+  transform: translateX(35%);
+}
+
+
+@media (max-width: 500px) {
+  .comment, .reply {
+    position: relative;
+    padding-bottom: 35px;
+  }
+  .replyBtn {
+    position: absolute;
+    bottom: 10px;
+    right: 15px;
+  }
+  .modifier {
+    position: absolute;
+    bottom: 10px;
+    right: 15px;
+  }
+}
+  </style>
 </head>
 
 <body class="theme">
@@ -23,7 +464,695 @@
     </footer>
 
   </main>
-  <script type="module" src="/main.js"></script>
+  <script>
+    const data = {
+  "currentUser": {
+    "image": { 
+      "png": "./public/avatars/image-juliusomo.png",
+      "webp": "./public/avatars/image-juliusomo.webp"
+    },
+    "username": "juliusomo"
+  },
+  "comments": [
+    {
+      "id": 1,
+      "content": "Impressive! Though it seems the drag feature could be improved. But overall it looks incredible. You've nailed the design and the responsiveness at various breakpoints works really well.",
+      "createdAt": "1 month ago",
+      "score": 12,
+      "user": {
+        "image": { 
+          "png": "./public/avatars/image-amyrobson.png",
+          "webp": "./public/avatars/image-amyrobson.webp"
+        },
+        "username": "amyrobson"
+      },
+      "replies": []
+    },
+    {
+      "id": 2,
+      "content": "Woah, your project looks awesome! How long have you been coding for? I'm still new, but think I want to dive into React as well soon. Perhaps you can give me an insight on where I can learn React? Thanks!",
+      "createdAt": "2 weeks ago",
+      "score": 5,
+      "user": {
+        "image": { 
+          "png": "./public/avatars/image-maxblagun.png",
+          "webp": "./public//avatars/image-maxblagun.webp"
+        },
+        "username": "maxblagun"
+      },
+      "replies": [
+        {
+          "id": 3,
+          "content": "If you're still new, I'd recommend focusing on the fundamentals of HTML, CSS, and JS before considering React. It's very tempting to jump ahead but lay a solid foundation first.",
+          "createdAt": "1 week ago",
+          "score": 4,
+          "replyingTo": "maxblagun",
+          "user": {
+            "image": { 
+              "png": "./public/avatars/image-ramsesmiron.png",
+              "webp": "./public/avatars/image-ramsesmiron.webp"
+            },
+            "username": "ramsesmiron"
+          }
+        },
+        {
+          "id": 4,
+          "content": "I couldn't agree more with this. Everything moves so fast and it always seems like everyone knows the newest library/framework. But the fundamentals are what stay constant.",
+          "createdAt": "2 days ago",
+          "score": 2,
+          "replyingTo": "ramsesmiron",
+          "user": {
+            "image": { 
+              "png": "./public/avatars/image-juliusomo.png",
+              "webp": "./public/avatars/image-juliusomo.webp"
+            },
+            "username": "juliusomo"
+          }
+        }
+      ]
+    }
+  ]
+}
+
+const mainContent = document.getElementById('mainContent');
+
+
+let edit = document.getElementsByClassName('editBtn');
+let deleteBtn = document.getElementsByClassName('deleteBtn');
+let usertext = document.getElementsByClassName('userText');
+let usercomment = document.getElementsByClassName('userComment');
+let modifier = document.getElementsByClassName('modifier');
+
+let plus = document.getElementsByClassName('plus');
+let moins = document.getElementsByClassName('minus');
+let screen = document.getElementsByClassName('screen');
+const send = document.getElementById('send');
+
+let themeBtn = document.getElementById('theme');
+let theme = document.getElementsByClassName('theme');
+let astre = document.getElementById('astre');
+
+
+let sendReply = document.getElementsByClassName('sendReply');
+let replySection = document.getElementsByClassName('replySection');
+
+let replyBtn = document.getElementsByClassName('replyBtn');
+let replyModal = document.getElementsByClassName('replyModal');
+let otherName = document.getElementsByClassName('otherName');
+
+
+let numberOfUserComments = 0;
+
+let deleteModal = document.createElement('div');
+deleteModal.classList.add('modal');
+deleteModal.innerHTML = `
+<h1>Delete comment</h1>
+<p>Are you sure you want to delete this comment? This will remove the comment and can't be undone.</p>
+<div>
+ <button id="no" class="no modalBtn">NO, CANCEL</button>
+ <button id="yes" class="yes modalBtn">YES, DELETE</button>
+</div>
+`
+document.body.appendChild(deleteModal);
+
+
+function replyObject(otherUser, otherImg, otherDate, otherContent, otherScore, replying) {
+  return `          
+  
+<div class="replyObject">
+
+  <div class="reply theme">
+
+    <div class="screenLike theme">
+      <button class="plus bgNone"><img src="./public/icon-plus.svg" alt=""></button>
+      <button class="screen bgNone">${otherScore}</button>
+      <button class="minus bgNone"><img src="./public/icon-minus.svg" alt=""></button>
+    </div>
+
+    <div class="header">
+        <div class="profile">
+          <btn class="otherProfile"><img src="${otherImg}" alt=""></btn>
+          <h1 class="userName theme otherName">${otherUser}</h1>
+          <b class="date theme">${otherDate}</b>
+          <button class="replyBtn theme bgNone"><img src="./public/icon-reply.svg" alt="">Reply</button>
+        </div>
+
+        <p class="text theme"><span class="replying">@${replying}</span> ${otherContent}</p>
+      </div>
+    </div>
+
+    <div class="replyModal theme">
+
+      <button class="userProfile"><img src="./public/avatars/image-juliusomo.webp" alt=""></button>
+      <textarea class="replyText"></textarea>
+      <button class="sendReply mainBtn">Reply</button>
+
+    </div>
+
+  <div class="replySection replyReplySection theme"></div>
+
+</div>
+`
+}
+
+function commentObject(username, userImg, date, content, score) {
+  return `
+  <div class="commentObject">
+
+        <div class="comment theme">
+
+          <div class="screenLike theme">
+            <button class="plus bgNone"><img src="./public/icon-plus.svg" alt=""></button>
+            <button class="screen bgNone">${score}</button>
+            <button class="minus bgNone"><img src="./public/icon-minus.svg" alt=""></button>
+          </div>
+
+          <div class="header">
+            <div class="profile">
+              <btn class="otherProfile mainProfile"><img src="${userImg}" alt=""></btn>
+              <h1 class="userName theme otherName">${username}</h1>
+              <b class="date theme">${date}</b>            
+              <button class="replyBtn theme bgNone"><img src="./public/icon-reply.svg" alt="">Reply</button>
+            </div>
+
+            <p class="text theme">${content}</p>
+          </div>
+
+        </div>
+
+        <div class="replyModal theme">
+
+          <button class="userProfile"><img src="./public/avatars/image-juliusomo.webp" alt=""></button>
+          <textarea class="replyText"></textarea>
+          <button class="sendReply mainBtn">Reply</button>
+
+        </div>
+
+        <div class="replySection theme"></div>
+
+        </div>
+
+      </div>
+
+  `
+}
+
+function initialContent() {
+
+  for (let i = 0; i < data.comments.length; i++) {
+    mainContent.innerHTML += commentObject(data.comments[i].user.username, data.comments[i].user.image.webp, data.comments[i].createdAt, data.comments[i].content, data.comments[i].score)
+
+    for (let j = 0; j < data.comments[i].replies.length; j++) {
+      let replySection = document.getElementsByClassName('replySection');
+      replySection[i].innerHTML += replyObject(data.comments[i].replies[j].user.username, data.comments[i].replies[j].user.image.webp, data.comments[i].replies[j].createdAt, data.comments[i].replies[j].content, data.comments[i].replies[j].score, data.comments[i].replies[j].replyingTo)
+    }
+
+  }
+
+  let firstUserComment = document.getElementsByClassName('replyObject')[1];
+
+  firstUserComment.innerHTML = `<div class="commentObject">
+
+  <div class="comment userComment theme">
+
+    <div class="screenLike theme">
+      <button class="plus bgNone"><img src="./public/icon-plus.svg" alt=""></button>
+      <button class="screen bgNone">0</button>
+      <button class="minus bgNone"><img src="./public/icon-minus.svg" alt=""></button>    
+    </div>
+
+    <div class="header">
+    <div class="profile">
+      <btn class="otherProfile"><img src="${data.currentUser.image.webp}" alt=""></btn>
+      <h1 class="userName theme">${data.currentUser.username}</h1>
+      <span id='you'>you</span>
+      <b class="date theme">just now</b>
+      <div class="modifier">
+       <button class="deleteBtn theme bgNone"><img src="./public/icon-delete.svg" alt="">Delete</button>
+       <button class="editBtn theme bgNone"><img src="./public/icon-edit.svg" alt="">Edit</button>
+      </div>
+    </div>
+      
+
+    
+    <p id='userText0' class="userText text theme"><span class="replying">@${data.comments[1].replies[1].replyingTo}</span> I couldn't agree more with this. Everything moves so fast and it always seems like everyone knows the newest library/framework. But the fundamentals are what stay constant.</p>
+
+    </div>
+  </div>
+
+</div>`
+
+}
+
+function userCommentObject(content) {
+  numberOfUserComments++;
+  return `
+  <div class="commentObject">
+
+    <div class="comment userComment theme">
+
+      <div class="screenLike theme">
+        <button class="plus bgNone"><img src="./public/icon-plus.svg" alt=""></button>
+        <button class="screen bgNone">0</button>
+        <button class="minus bgNone"><img src="./public/icon-minus.svg" alt=""></button>    
+      </div>
+
+      <div class="header">
+      <div class="profile">
+        <btn class="otherProfile"><img src="${data.currentUser.image.webp}" alt=""></btn>
+        <h1 class="userName theme">${data.currentUser.username}</h1>
+        <span id='you'>you</span>
+        <b class="date theme">just now</b>
+        <div class="modifier">
+         <button class="deleteBtn theme bgNone"><img src="./public/icon-delete.svg" alt="">Delete</button>
+         <button class="editBtn theme bgNone"><img src="./public/icon-edit.svg" alt="">Edit</button>
+        </div>
+      </div>
+        
+
+      
+      <p id='userText${numberOfUserComments}' class="userText text theme">${content}</p>
+      </div>
+    </div>
+
+  </div>
+
+  `
+}
+function userReplyObject(content, replying) {
+  numberOfUserComments++;
+  return `
+  <div class="commentObject">
+
+    <div class="comment userComment userReply theme">
+
+      <div class="screenLike theme">
+        <button class="plus bgNone"><img src="./public/icon-plus.svg" alt=""></button>
+        <button class="screen bgNone">0</button>
+        <button class="minus bgNone"><img src="./public/icon-minus.svg" alt=""></button>    
+      </div>
+
+      <div class="header">
+      <div class="profile">
+        <btn class="otherProfile"><img src="${data.currentUser.image.webp}" alt=""></btn>
+        <h1 class="userName theme">${data.currentUser.username}</h1>
+        <span id='you'>you</span>
+        <b class="date theme">just now</b>
+        <div class="modifier">
+         <button class="deleteBtn theme bgNone"><img src="./public/icon-delete.svg" alt="">Delete</button>
+         <button class="editBtn theme bgNone"><img src="./public/icon-edit.svg" alt="">Edit</button>
+        </div>
+      </div>
+        
+
+      
+      <p id='userText${numberOfUserComments}' class="userText text theme">${replying} ${content}</p>
+     </div>
+    </div>
+
+  </div>
+
+  `
+}
+function sendComment() {
+
+  const userText = document.getElementById('userText')
+
+  let state = false;
+
+  if (userText.value.length > 0) {
+    let sample = userText.value.replace(/\s/g, '')
+    if (sample.length > 0) {
+      state = true;
+    }
+  }
+
+  if (state) {
+    mainContent.innerHTML += userCommentObject('null');
+    document.getElementsByTagName('header')[0].scrollTo(0, document.getElementsByTagName('header')[0].scrollHeight)
+    let text = document.getElementById(`userText${numberOfUserComments}`);
+    text.innerText = userText.value.toString();
+    plus = document.getElementsByClassName('plus');
+    moins = document.getElementsByClassName('minus');
+    screen = document.getElementsByClassName('screen');
+  }
+
+  userText.value = '';
+  userText.blur()
+
+
+  let edit = document.getElementsByClassName('editBtn');
+  let deleteBtn = document.getElementsByClassName('deleteBtn');
+  let usertext = document.getElementsByClassName('userText');
+  let modifier = document.getElementsByClassName('modifier');
+
+  for (let i = 0; i < edit.length; i++) {
+    edit[i].addEventListener('click', () => {
+      deleteBtn[i].style.display = 'none';
+      edit[i].style.display = 'none';
+      usertext[i].contentEditable = true;
+      usertext[i].style.outline = 'var(--contenteditable)';
+      usertext[i].classList.add('contenteditable');
+
+      let update = document.createElement('button')
+      update.id = 'updateBtn';
+      update.classList.add('mainBtn');
+      update.innerText = 'Update';
+      modifier[i].appendChild(update);
+
+      update.addEventListener('click', () => {
+        usertext[i].contentEditable = false;
+        usertext[i].style.outline = 'none';
+        usertext[i].classList.remove('contenteditable');
+        update.remove();
+        deleteBtn[i].style.display = 'flex';
+        edit[i].style.display = 'flex';
+      })
+
+    })
+  }
+
+  for (let i = 0; i < deleteBtn.length; i++) {
+    deleteBtn[i].addEventListener('click', () => {
+
+      deleteModal.classList.add('deleteModal');
+      document.body.classList.add('deleteModal');
+
+      let no = document.getElementById('no');
+      let yes = document.getElementById('yes');
+
+      no.addEventListener('click', () => {
+        deleteModal.classList.remove('deleteModal');
+        document.body.classList.remove('deleteModal');
+      })
+
+      yes.addEventListener('click', () => {
+        deleteModal.classList.remove('deleteModal');
+        document.body.classList.remove('deleteModal');
+
+        usercomment[i].classList.add('display');
+      })
+    })
+  }
+
+
+
+  toLike()
+
+  let sendReply = document.getElementsByClassName('sendReply');
+  let replySection = document.getElementsByClassName('replySection');
+
+  let replyBtn = document.getElementsByClassName('replyBtn');
+  let replyModal = document.getElementsByClassName('replyModal');
+  let otherName = document.getElementsByClassName('otherName');
+
+  for (let i = 0; i < replyBtn.length; i++) {
+    replyBtn[i].addEventListener('click', () => {
+
+
+      replyModal[i].getElementsByClassName('replyText')[0].value = '';
+      replyModal[i].getElementsByClassName('replyText')[0].focus();
+      replyModal[i].classList.toggle('show');
+
+      for (let j = 0; j < replyModal.length; j++) {
+        if (j != i) {
+          replyModal[j].classList.remove('show');
+        }
+      }
+
+    })
+  }
+  for (let i = 0; i < sendReply.length; i++) {
+    sendReply[i].addEventListener('click', () => {
+
+      let replying = otherName[i].innerHTML;
+
+      for (let j = 0; j < replyModal.length; j++) {
+        replyModal[j].classList.remove('show');
+      }
+
+      replySection[i].innerHTML += userReplyObject(replyModal[i].getElementsByClassName('replyText')[0].value, `<span class="replying">@${replying}</span>`);
+
+      toLike()
+
+      theme = document.getElementsByClassName('theme')
+      if (document.body.classList.contains('dark')) {
+        for (let i = 0; i < theme.length; i++) {
+          if (astre.classList.contains('moon')) {
+            theme[i].classList.add('dark');
+          }
+        }
+      }
+
+      let edit = document.getElementsByClassName('editBtn');
+      let deleteBtn = document.getElementsByClassName('deleteBtn');
+      let usertext = document.getElementsByClassName('userText');
+      let usercomment = document.getElementsByClassName('userComment')
+
+      for (let i = 0; i < edit.length; i++) {
+        edit[i].addEventListener('click', () => {
+          usertext[i].contentEditable = true;
+          usertext[i].style.outline = 'var(--contenteditable)';
+          usertext[i].classList.add('contenteditable');
+
+          let update = document.createElement('button')
+          update.id = 'updateBtn';
+          update.classList.add('mainBtn');
+          update.innerText = 'Update';
+          usercomment[i].appendChild(update)
+
+          update.addEventListener('click', () => {
+            usertext[i].contentEditable = false;
+            usertext[i].style.outline = 'none';
+            usertext[i].classList.remove('contenteditable');
+            update.remove();
+          })
+
+        })
+      }
+
+      for (let i = 0; i < deleteBtn.length; i++) {
+        deleteBtn[i].addEventListener('click', () => {
+
+          deleteModal.classList.add('deleteModal');
+          document.body.classList.add('deleteModal');
+
+          let no = document.getElementById('no');
+          let yes = document.getElementById('yes');
+
+          no.addEventListener('click', () => {
+            deleteModal.classList.remove('deleteModal');
+            document.body.classList.remove('deleteModal');
+          })
+
+          yes.addEventListener('click', () => {
+            deleteModal.classList.remove('deleteModal');
+            document.body.classList.remove('deleteModal');
+
+            usercomment[i].classList.add('display');
+          })
+        })
+      }
+
+    })
+  }
+
+  theme = document.getElementsByClassName('theme')
+  if (document.body.classList.contains('dark')) {
+    for (let i = 0; i < theme.length; i++) {
+      if (!theme[i].classList.contains('dark')) {
+        theme[i].classList.toggle('dark');
+      }
+    }
+  }
+}
+
+function toLike() {
+
+
+  let plus = document.getElementsByClassName('plus');
+  let moins = document.getElementsByClassName('minus');
+  let screen = document.getElementsByClassName('screen');
+
+  for (let i = 0; i < plus.length; i++) {
+    plus[i].addEventListener('click', () => {
+      screen[i].innerHTML = parseInt(screen[i].innerHTML) + 1;
+      moins[i].disabled = false;
+      plus[i].disabled = true;
+    })
+  }
+
+  for (let i = 0; i < moins.length; i++) {
+    moins[i].addEventListener('click', () => {
+      if (plus[i].disabled != false) {
+        screen[i].innerHTML = parseInt(screen[i].innerHTML) - 1;
+        moins[i].disabled = true;
+        plus[i].disabled = false;
+      }
+    })
+  }
+}
+
+initialContent()
+
+toLike()
+
+for (let i = 0; i < edit.length; i++) {
+  edit[i].addEventListener('click', () => {
+    deleteBtn[i].style.display = 'none';
+    edit[i].style.display = 'none';
+    usertext[i].contentEditable = true;
+    usertext[i].style.outline = 'var(--contenteditable)';
+    usertext[i].classList.add('contenteditable');
+
+    let update = document.createElement('button')
+    update.id = 'updateBtn';
+    update.classList.add('mainBtn');
+    update.innerText = 'Update';
+    modifier[i].appendChild(update);
+
+    update.addEventListener('click', () => {
+      usertext[i].contentEditable = false;
+      usertext[i].style.outline = 'none';
+      usertext[i].classList.remove('contenteditable');
+      update.remove();
+      deleteBtn[i].style.display = 'flex';
+      edit[i].style.display = 'flex';
+    })
+
+  })
+}
+
+for (let i = 0; i < deleteBtn.length; i++) {
+  deleteBtn[i].addEventListener('click', () => {
+
+    deleteModal.classList.add('deleteModal');
+    document.body.classList.add('deleteModal');
+
+    let no = document.getElementById('no');
+    let yes = document.getElementById('yes');
+
+    no.addEventListener('click', () => {
+      deleteModal.classList.remove('deleteModal');
+      document.body.classList.remove('deleteModal');
+    })
+
+    yes.addEventListener('click', () => {
+      deleteModal.classList.remove('deleteModal');
+      document.body.classList.remove('deleteModal');
+
+      usercomment[i].classList.add('display');
+    })
+  })
+}
+
+for (let i = 0; i < replyBtn.length; i++) {
+  replyBtn[i].addEventListener('click', () => {
+
+
+    replyModal[i].getElementsByClassName('replyText')[0].value = '';
+    replyModal[i].getElementsByClassName('replyText')[0].focus();
+    replyModal[i].classList.toggle('show');
+
+    for (let j = 0; j < replyModal.length; j++) {
+      if (j != i) {
+        replyModal[j].classList.remove('show');
+      }
+    }
+
+  })
+}
+
+for (let i = 0; i < sendReply.length; i++) {
+  sendReply[i].addEventListener('click', () => {
+
+    let replying = otherName[i].innerHTML;
+
+    for (let j = 0; j < replyModal.length; j++) {
+      replyModal[j].classList.remove('show');
+    }
+
+    replySection[i].innerHTML += userReplyObject(replyModal[i].getElementsByClassName('replyText')[0].value, `<span class="replying">@${replying}</span>`);
+
+    toLike()
+
+    theme = document.getElementsByClassName('theme')
+    if (document.body.classList.contains('dark')) {
+      for (let i = 0; i < theme.length; i++) {
+        if (astre.classList.contains('moon')) {
+          theme[i].classList.add('dark');
+        }
+      }
+    }
+
+    let edit = document.getElementsByClassName('editBtn');
+    let deleteBtn = document.getElementsByClassName('deleteBtn');
+    let usertext = document.getElementsByClassName('userText');
+    let usercomment = document.getElementsByClassName('userComment')
+
+    for (let i = 0; i < edit.length; i++) {
+      edit[i].addEventListener('click', () => {
+        usertext[i].contentEditable = true;
+        usertext[i].style.outline = 'var(--contenteditable)';
+        usertext[i].classList.add('contenteditable');
+
+        let update = document.createElement('button')
+        update.id = 'updateBtn';
+        update.classList.add('mainBtn');
+        update.innerText = 'Update';
+        usercomment[i].appendChild(update)
+
+        update.addEventListener('click', () => {
+          usertext[i].contentEditable = false;
+          usertext[i].style.outline = 'none';
+          usertext[i].classList.remove('contenteditable');
+          update.remove();
+
+          edit = document.getElementsByClassName('editBtn');
+          deleteBtn = document.getElementsByClassName('deleteBtn');
+        })
+
+      })
+    }
+
+    for (let i = 0; i < deleteBtn.length; i++) {
+      deleteBtn[i].addEventListener('click', () => {
+
+        deleteModal.classList.add('deleteModal');
+        document.body.classList.add('deleteModal');
+
+        let no = document.getElementById('no');
+        let yes = document.getElementById('yes');
+
+        no.addEventListener('click', () => {
+          deleteModal.classList.remove('deleteModal');
+          document.body.classList.remove('deleteModal');
+        })
+
+        yes.addEventListener('click', () => {
+          deleteModal.classList.remove('deleteModal');
+          document.body.classList.remove('deleteModal');
+
+          usercomment[i].classList.add('display');
+        })
+      })
+    }
+
+  })
+}
+
+
+send.addEventListener('click', sendComment)
+document.body.addEventListener('keydown', (e) => { if (e.key === 'Enter') { sendComment() } })
+
+themeBtn.addEventListener('click', () => {
+  astre.classList.toggle('moon');
+  for (let i = 0; i < theme.length; i++) {
+    theme[i].classList.toggle('dark');
+  }
+})
+
+  </script>
 </body>
 
 </html>
